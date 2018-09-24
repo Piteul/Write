@@ -23,6 +23,13 @@ namespace Write {
                 complet = Vector3.Add(p, d);
             }
 
+            public Ray(Camera c, Vector3 v2) {
+                p = c.position;
+                d = v2;
+                complet = Vector3.Add(p, d);
+            }
+
+
         }
 
 
@@ -71,9 +78,9 @@ namespace Write {
             double C = Vector3.Dot(vecSub, vecSub) - Math.Pow(sphere.r, 2);
 
             //affichage
-            Console.WriteLine("A : " + A.ToString());
-            Console.WriteLine("B : " + B.ToString());
-            Console.WriteLine("C : " + C.ToString());
+            //Console.WriteLine("A : " + A.ToString());
+            //Console.WriteLine("B : " + B.ToString());
+            //Console.WriteLine("C : " + C.ToString());
 
             //Calcul du delta
             double delta = Math.Pow(B, 2) - (4 * (A * C));
@@ -100,8 +107,26 @@ namespace Write {
 
         }
 
-        public static void trouverSphere(Camera camera, Sphere sphere) {
+        public static void trouverSphere(Image img, Camera camera, Sphere sphere) {
 
+            Ray ray;
+
+            for (int x = 0; x < camera.longueur; x++) {
+                for (int y = 0; y < camera.largeur; y++) {
+                    Vector3 vec = Vector3.Add(new Vector3(x, y, 0), camera.position);
+                    ray = new Ray(vec, new Vector3(0,0,1));
+
+                    if (intersection(ray, sphere) == -1) {
+                        //Console.WriteLine("No intersection");
+
+                    }
+                    else {
+
+
+                    }
+
+                }
+            }
 
         }
 
