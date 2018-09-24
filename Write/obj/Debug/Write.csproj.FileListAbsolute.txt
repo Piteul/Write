@@ -5,3 +5,10 @@ C:\Users\jiodu\source\repos\Write\Write\bin\Debug\Write.exe
 C:\Users\jiodu\source\repos\Write\Write\bin\Debug\Write.pdb
 C:\Users\jiodu\source\repos\Write\Write\obj\Debug\Write.exe
 C:\Users\jiodu\source\repos\Write\Write\obj\Debug\Write.pdb
+C:\Users\atetart\Documents\GitHub\Write\Write\bin\Debug\Write.exe.config
+C:\Users\atetart\Documents\GitHub\Write\Write\bin\Debug\Write.exe
+C:\Users\atetart\Documents\GitHub\Write\Write\bin\Debug\Write.pdb
+C:\Users\atetart\Documents\GitHub\Write\Write\obj\Debug\Write.csprojAssemblyReference.cache
+C:\Users\atetart\Documents\GitHub\Write\Write\obj\Debug\Write.csproj.CoreCompileInputs.cache
+C:\Users\atetart\Documents\GitHub\Write\Write\obj\Debug\Write.exe
+C:\Users\atetart\Documents\GitHub\Write\Write\obj\Debug\Write.pdb
