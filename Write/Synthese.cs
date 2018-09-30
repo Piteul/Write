@@ -27,11 +27,11 @@ namespace Write {
                 complet = Vector3.Add(p, d);
             }
 
-            public Ray(Camera c, Vector3 v2) {
-                p = c.position;
-                d = v2;
-                complet = Vector3.Add(p, d);
-            }
+            //public Ray(Camera c, Vector3 v2) {
+            //    p = c.position;
+            //    d = v2;
+            //    complet = Vector3.Add(p, d);
+            //}
 
 
         }
@@ -58,16 +58,55 @@ namespace Write {
         /// Camera
         /// </summary>
         public struct Camera {
-            public Vector3 position { get; set; }
-            public int hauteur;
-            public int largeur;
 
-            public Camera(Vector3 p, int _hauteur, int _largeur) {
-                position = p;
-                hauteur = _hauteur;
+            public Vector3 o;
+            public int longueur, largeur;
+            public Vector3 d;
+            public Vector3 focus;
+            //public float distanceFocus = 500;
+
+            public Camera(Vector3 _origine, int _longueur, int _largeur, Vector3 _direction) {
+                o = _origine;
+                longueur = _longueur;
                 largeur = _largeur;
+                d = Vector3.Normalize(_direction);
+                focus = new Vector3(o.X + (longueur / 2), o.Y + (largeur / 2), o.Z);
+                focus = Vector3.Add(focus, Vector3.Multiply(Vector3.Negate(d), 500));
             }
 
+            public Vector3 GetFocusAngle(float x, float y) {
+                Vector3 res = Vector3.Subtract(new Vector3(x, y, o.Z), focus);
+                return Vector3.Normalize(res);
+            }
+
+
+            //public Vector3 position { get; set; }
+            //public int hauteur;
+            //public int largeur;
+
+            //public Camera(Vector3 p, int _hauteur, int _largeur) {
+            //    position = p;
+            //    hauteur = _hauteur;
+            //    largeur = _largeur;
+            //}
+
+        }
+
+        /// <summary>
+        /// Scene
+        /// </summary>
+        public struct Scene {
+            public List<Sphere> spheres;
+            public Camera cam { get; set; }
+            public Lumiere lumiere { get; set; }
+
+
+            public Scene(Camera _cam, Lumiere _lumiere) {
+                cam = _cam;
+                lumiere = _lumiere;
+                spheres = new List<Sphere>();
+
+            }
         }
 
         /// <summary>
@@ -135,7 +174,7 @@ namespace Write {
             double delta = Math.Pow(B, 2) - (4 * (A * C));
 
             if (delta < 0) {
-                Console.WriteLine("Aucune intersection");
+                //Console.WriteLine("Aucune intersection");
 
                 return -1;
             }
@@ -146,8 +185,8 @@ namespace Write {
 
                 double finalRes = Math.Min(res1, res2);
 
-                Console.WriteLine("Intersection !");
-                Console.WriteLine("Res delta: " + finalRes.ToString());
+                //Console.WriteLine("Intersection !");
+                //Console.WriteLine("Res delta: " + finalRes.ToString());
 
                 return finalRes;
             }
@@ -156,28 +195,7 @@ namespace Write {
 
         }
 
-        public static void trouverSphere(Image img, Camera camera, Sphere sphere) {
-
-            Ray ray;
-
-            for (int x = 0; x < camera.hauteur; x++) {
-                for (int y = 0; y < camera.largeur; y++) {
-                    Vector3 vec = Vector3.Add(new Vector3(x, y, 0), camera.position);
-                    ray = new Ray(vec, new Vector3(0, 0, 1));
-
-                    if (intersection(ray, sphere) == -1) {
-                        //Console.WriteLine("No intersection");
-
-                    }
-                    else {
-
-
-                    }
-
-                }
-            }
-
-        }
+     
 
     }
 }

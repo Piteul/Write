@@ -17,7 +17,12 @@ namespace Write {
         public int[,] b;
         public Couleur couleur;
 
-
+        /// <summary>
+        /// Image
+        /// </summary>
+        /// <param name="_hauteur"></param>
+        /// <param name="_largeur"></param>
+        /// <param name="_couleur"></param>
         public Image(int _hauteur, int _largeur, Couleur _couleur) {
             hauteur = _hauteur;
             largeur = _largeur;
@@ -28,20 +33,30 @@ namespace Write {
 
             for (int i = 0; i < hauteur; i++)
                 for (int j = 0; j < largeur; j++) {
-                    dessinerPixel(i, j, couleur.rgb);
+                    dessinerPixel(i, j, couleur.rgb, 255);
                     //r[i, j] = 255;
                     //g[i, j] = 255;
                     //b[i, j] = 255;
                 }
         }
 
-
-        public void dessinerPixel(int x, int y, double[] _rgb) {
-            this.r[x, y] = (int)(_rgb[0]*255);
-            this.g[x, y] = (int)(_rgb[1]*255);
-            this.b[x, y] = (int)(_rgb[2]*255);
+        /// <summary>
+        /// Dessine un pixel (x,y)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="_rgb"></param>
+        public void dessinerPixel(int x, int y, double[] _rgb, int val) {
+            this.r[x, y] = (int)(_rgb[0] * val);
+            this.g[x, y] = (int)(_rgb[1] * val);
+            this.b[x, y] = (int)(_rgb[2] * val);
 
         }
+
+        /// <summary>
+        /// Dessine une sphère
+        /// </summary>
+        /// <param name="sphere"></param>
         public void dessinerSphere(Sphere sphere) {
 
             for (int i = 0; i < hauteur; i++)
@@ -49,7 +64,7 @@ namespace Write {
 
                     if (Math.Pow(i - sphere.c.X, 2) + Math.Pow(j - sphere.c.Y, 2) < Math.Pow(sphere.r, 2)) {
 
-                        dessinerPixel(i, j, sphere.couleur.rgb);
+                        dessinerPixel(i, j, sphere.couleur.rgb, 255);
                         //r[i, j] = 0;
                         //g[i, j] = 172;
                         //b[i, j] = 230;
@@ -57,7 +72,10 @@ namespace Write {
                 }
         }
 
-
+        /// <summary>
+        /// Dessine un rayon
+        /// </summary>
+        /// <param name="rayon"></param>
         public void dessinerRayon(Ray rayon) {
             r[(int)rayon.p.X, (int)rayon.p.Y] = 255;
             g[(int)rayon.p.X, (int)rayon.p.Y] = 153;
@@ -79,6 +97,11 @@ namespace Write {
                 }
         }
 
+        /// <summary>
+        /// Dessine l'intersection d'un rayon et d'une sphère
+        /// </summary>
+        /// <param name="rayon"></param>
+        /// <param name="sphere"></param>
         public void dessinerIntersection(Ray rayon, Sphere sphere) {
             float x = (float) intersection(rayon, sphere);
             if (x != -1) {
@@ -91,6 +114,52 @@ namespace Write {
                 b[(int)i.X, (int)i.Y] = 0;
             }
 
+        }
+
+        public Image DrawImg(Camera cam, Scene scen, Couleur _couleur) {
+            Image img = new Image(cam.largeur, cam.longueur, _couleur);
+            for (int x = (int)cam.o.X; x < cam.o.X + cam.largeur; x++) {
+                for (int y = (int)cam.o.Y; y < cam.o.Y + cam.longueur; y++) {
+                    Ray r = new Ray(new Vector3(x, y, cam.o.Z), cam.GetFocusAngle(x, y));
+                    double temp = double.MaxValue;
+                    Sphere s2 = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0)); //défaut
+                    foreach (Sphere s in scen.spheres) {
+                        if (intersection(r, s) != -1 && intersection(r, s) < temp) {
+                            temp = intersection(r, s);
+                            s2 = s;
+                        }
+                    }
+                    if (temp != double.MaxValue) {
+                        Vector3 pointOnSphere = Vector3.Add(new Vector3(x, y, cam.o.Z), Vector3.Multiply((float)temp, cam.d));
+
+                        //On décale i un tout petit peu vers l'extérieur de la sphère pour être sur de pas être dans la sphère.
+                        //On calcule le vecteur pointSphere->centreSphere, on le normalise et on l'inverse
+                        Vector3 directionTemp = Vector3.Negate(Vector3.Normalize(Vector3.Subtract(s2.c, pointOnSphere)));
+
+                        pointOnSphere = Vector3.Add(pointOnSphere, directionTemp);
+                        Ray r2 = new Ray(pointOnSphere, Vector3.Subtract(scen.lumiere.origine, pointOnSphere));
+                        bool seeTheLight = true;
+
+                        foreach (Sphere s in scen.spheres) {
+                            if (intersection(r, s) != -1) {
+                                seeTheLight = false;
+                                break;
+                            }
+
+                        }
+                        if (seeTheLight) {
+                            Console.WriteLine("Lumiere");
+                            dessinerPixel(x, y, s2.couleur.rgb, 255);
+                        }
+                        else {
+                            dessinerPixel(x, y, s2.couleur.rgb, 100);
+
+                        }
+                    }
+                }
+            }
+
+            return img;
         }
 
         /// <summary>
