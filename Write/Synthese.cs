@@ -8,7 +8,10 @@ using System.Numerics;
 namespace Write {
     public class Synthese {
 
-        //Rayon de base P et direction D
+
+        /// <summary>
+        /// Rayon de base P et direction D
+        /// </summary>
         public struct Ray {
             //point
             public Vector3 p { get; set; }
@@ -16,6 +19,7 @@ namespace Write {
             public Vector3 d { get; set; }
 
             public Vector3 complet { get; set; }
+
 
             public Ray(Vector3 v1, Vector3 v2) {
                 p = v1;
@@ -32,34 +36,74 @@ namespace Write {
 
         }
 
-
-        //Sphère, centre C et rayon R
+        /// <summary>
+        /// Sphère, centre C et rayon R
+        /// </summary>
         public struct Sphere {
             //centre
             public Vector3 c { get; set; }
-            //longueur rayon
+            //hauteur rayon
             public float r { get; set; }
 
-            public Sphere(Vector3 v1, int f) {
+            public Couleur couleur;
+
+            public Sphere(Vector3 v1, int f, Couleur _couleur) {
                 c = v1;
                 r = f;
+                couleur = _couleur;
             }
         }
 
-        //Camera
+        /// <summary>
+        /// Camera
+        /// </summary>
         public struct Camera {
             public Vector3 position { get; set; }
-            public int longueur;
+            public int hauteur;
             public int largeur;
 
-            public Camera(Vector3 p, int _longueur, int _largeur) {
+            public Camera(Vector3 p, int _hauteur, int _largeur) {
                 position = p;
-                longueur = _longueur;
+                hauteur = _hauteur;
                 largeur = _largeur;
             }
 
         }
 
+        /// <summary>
+        /// Lumiere
+        /// </summary>
+        public struct Lumiere {
+            public Vector3 origine;
+
+            public Lumiere(Vector3 _origine) {
+                origine = _origine;
+            }
+
+        }
+
+        /// <summary>
+        /// Couleur
+        /// </summary>
+        public struct Couleur {
+            public double r, g, b;
+            public double[] rgb;
+
+            public Couleur(double red, double green, double blue) {
+                r = red;
+                g = green;
+                b = blue;
+                rgb = new double[3] { red, green, blue };
+            }
+
+        }
+
+        /// <summary>
+        /// Détermine si on est sur le rayon ou non
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
         public static bool surRayon(Ray r, Vector3 v) {
             if (((v.X - r.p.X) / (r.complet.X - r.p.X)) == ((v.Y - r.p.Y) / (r.complet.Y - r.p.Y))
                 && ((v.X - r.p.X) / (r.complet.X - r.p.X)) == ((v.Z - r.p.Z) / (r.complet.Z - r.p.Z)))
@@ -68,7 +112,12 @@ namespace Write {
                 return false;
         }
 
-        //Calcule l'intersection entre le rayon et la sphère
+        /// <summary>
+        /// Calcule l'intersection entre le rayon et la sphère
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <param name="sphere"></param>
+        /// <returns></returns>
         public static double intersection(Ray ray, Sphere sphere) {
 
             //c-p
@@ -111,10 +160,10 @@ namespace Write {
 
             Ray ray;
 
-            for (int x = 0; x < camera.longueur; x++) {
+            for (int x = 0; x < camera.hauteur; x++) {
                 for (int y = 0; y < camera.largeur; y++) {
                     Vector3 vec = Vector3.Add(new Vector3(x, y, 0), camera.position);
-                    ray = new Ray(vec, new Vector3(0,0,1));
+                    ray = new Ray(vec, new Vector3(0, 0, 1));
 
                     if (intersection(ray, sphere) == -1) {
                         //Console.WriteLine("No intersection");

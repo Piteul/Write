@@ -10,42 +10,55 @@ using static Write.Synthese;
 namespace Write {
     public class Image {
 
-        public int height;
-        public int width;
+        public int hauteur;
+        public int largeur;
         public int[,] r;
         public int[,] g;
         public int[,] b;
+        public Couleur couleur;
 
 
-        public Image(int _height, int _width) {
-            height = _height;
-            width = _width;
-            r = new int[height, width];
-            g = new int[height, width];
-            b = new int[height, width];
+        public Image(int _hauteur, int _largeur, Couleur _couleur) {
+            hauteur = _hauteur;
+            largeur = _largeur;
+            r = new int[hauteur, largeur];
+            g = new int[hauteur, largeur];
+            b = new int[hauteur, largeur];
+            Couleur couleur = _couleur;
 
-            for (int i = 0; i < height; i++)
-                for (int j = 0; j < width; j++) {
-                    r[i, j] = 255;
-                    g[i, j] = 255;
-                    b[i, j] = 255;
+            for (int i = 0; i < hauteur; i++)
+                for (int j = 0; j < largeur; j++) {
+                    dessinerPixel(i, j, couleur.rgb);
+                    //r[i, j] = 255;
+                    //g[i, j] = 255;
+                    //b[i, j] = 255;
                 }
         }
 
-        public void drawASphere(Sphere sphere) {
 
-            for (int i = 0; i < height; i++)
-                for (int j = 0; j < width; j++) {
+        public void dessinerPixel(int x, int y, double[] _rgb) {
+            this.r[x, y] = (int)(_rgb[0]*255);
+            this.g[x, y] = (int)(_rgb[1]*255);
+            this.b[x, y] = (int)(_rgb[2]*255);
+
+        }
+        public void dessinerSphere(Sphere sphere) {
+
+            for (int i = 0; i < hauteur; i++)
+                for (int j = 0; j < largeur; j++) {
 
                     if (Math.Pow(i - sphere.c.X, 2) + Math.Pow(j - sphere.c.Y, 2) < Math.Pow(sphere.r, 2)) {
-                        r[i, j] = 0;
-                        g[i, j] = 172;
-                        b[i, j] = 230;
+
+                        dessinerPixel(i, j, sphere.couleur.rgb);
+                        //r[i, j] = 0;
+                        //g[i, j] = 172;
+                        //b[i, j] = 230;
                     }
                 }
         }
 
-        public void drawARayon(Ray rayon) {
+
+        public void dessinerRayon(Ray rayon) {
             r[(int)rayon.p.X, (int)rayon.p.Y] = 255;
             g[(int)rayon.p.X, (int)rayon.p.Y] = 153;
             b[(int)rayon.p.X, (int)rayon.p.Y] = 0;
@@ -55,10 +68,9 @@ namespace Write {
             b[(int)rayon.complet.X, (int)rayon.complet.Y] = 0;
 
 
-            for (int i = 0; i < height; i++)
-                for (int j = 0; j < width; j++) {
+            for (int i = 0; i < hauteur; i++)
+                for (int j = 0; j < largeur; j++) {
                     if (surRayon(rayon, new Vector3(i, j, 0))) {
-                        Console.WriteLine("oui");
                         r[i, j] = 255;
                         g[i, j] = 13;
                         b[i, j] = 13;
@@ -67,7 +79,7 @@ namespace Write {
                 }
         }
 
-        public void drawIntersection(Ray rayon, Sphere sphere) {
+        public void dessinerIntersection(Ray rayon, Sphere sphere) {
             float x = (float) intersection(rayon, sphere);
             if (x != -1) {
                 Vector3 i = Vector3.Add(rayon.p, Vector3.Multiply(x, rayon.d));
@@ -81,8 +93,9 @@ namespace Write {
 
         }
 
-
-        //Simple function to write a file
+        /// <summary>
+        ///Simple function to write a file
+        /// </summary>
         public void SimpleWrite() {
             // Create a string array with the lines of text
             string[] lines = { "First line", "Second line", "Third line", "Fourth Line" };
@@ -97,7 +110,10 @@ namespace Write {
                     outputFile.WriteLine(line);
             }
         }
-        //Simple function to write a PPM
+
+        /// <summary>
+        ///Simple function to write a PPM
+        /// </summary>
         public void simplePPM() {
             // Create a string array with the lines of text
             string[] lines =
@@ -118,10 +134,15 @@ namespace Write {
             }
         }
 
-        public static void writePPM(string file, Image img) {
+        /// <summary>
+        /// Create the PPM file of the Image
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="img"></param>
+        public static void genererPPM(string file, Image img) {
             //Use a streamwriter to write the text part of the encoding.
-            var width = img.width;
-            var height = img.height;
+            var largeur = img.largeur;
+            var hauteur = img.hauteur;
 
         // Set a variable to the My Documents path.
         string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -130,12 +151,12 @@ namespace Write {
 
          StreamWriter outputFile = new StreamWriter(Path.Combine(mydocpath, file));
             outputFile.Write("P3" + "\n");
-            outputFile.Write(width + " " + height + "\n");
+            outputFile.Write(largeur + " " + hauteur + "\n");
             outputFile.Write("255" + "\n");
 
 
-            for (int x = 0; x < height; x++)
-                for (int y = 0; y < width; y++) {
+            for (int x = 0; x < hauteur; x++)
+                for (int y = 0; y < largeur; y++) {
                     outputFile.WriteLine(img.r[x, y]);
                     outputFile.WriteLine(img.g[x, y]);
                     outputFile.WriteLine(img.b[x, y]);

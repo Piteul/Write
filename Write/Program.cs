@@ -19,28 +19,23 @@ namespace Write {
             //Synthese.intersection(rayon, sphere);
 
             Ray rayon = new Ray(new Vector3(10, 10, 0), new Vector3(1, 0, 0));
-            Sphere sphere = new Sphere(new Vector3(20, 10, 0), 5);
+            Sphere sphere = new Sphere(new Vector3(20, 10, 0), 5, new Couleur(0.3,0.8,0.1));
             Camera camera = new Camera(new Vector3(0, 0, -10), 20,20);
 
 
-           
-
            // trouverSphere(camera, sphere);
 
-            Console.WriteLine("\nPress any key to exit.");
-            Console.ReadLine();
 
 
-            ////Dessin classique
-            //string nomFichier = "test.ppm";
-            //Image img = new Image(20, 20);
-            //img.drawASphere(sphere);
-            //img.drawARayon(rayon);
-            //img.drawIntersection(rayon, sphere);
-            //Image.writePPM(nomFichier, img);
 
-            //Ray rayon = new Ray(new Vector3(10, 10, 0), new Vector3(1, 0, 0));
-            //Sphere sphere = new Sphere(new Vector3(20, 10, 0), 5);
+            //Dessin classique
+            string nomFichier = "test.ppm";
+            Image img = new Image(200, 200, new Couleur(1,1,1));
+            img.dessinerSphere(sphere);
+            img.dessinerRayon(rayon);
+            img.dessinerIntersection(rayon, sphere);
+            Image.genererPPM(nomFichier, img);
+
 
             //Vector3 v12 = rayon.p;
 
@@ -51,6 +46,11 @@ namespace Write {
             //Console.WriteLine("Résultat :");
             //Console.WriteLine(res.ToString());
             //Console.WriteLine("Produit Scalaire : " + prodScalaire.ToString());
+
+            Console.WriteLine("\nPress any key to exit.");
+            Console.ReadLine();
+
+
 
 
         }
