@@ -83,11 +83,37 @@ namespace Write {
             public Vector3 position { get; set; }
             public int hauteur;
             public int largeur;
-
+            public Focus focus;
+            
             public Camera(Vector3 p, int _hauteur, int _largeur) {
                 position = p;
                 hauteur = _hauteur;
                 largeur = _largeur;
+
+                focus.distance = 2000;
+                focus.position = new Vector3(position.X + (hauteur / 2), position.Y + (largeur / 2), position.Z-focus.distance);
+                Console.WriteLine("Focus pos : " + focus.position.ToString());
+            }
+
+
+            public Vector3 VecteurDirecteurFocus(float x, float y) {
+                Vector3 v = Vector3.Subtract(new Vector3(x, y, position.Z), focus.position);
+                //Console.WriteLine("Vector angleFocus : " + vec.ToString());
+                return Vector3.Normalize(v);
+            }
+
+        }
+
+        /// <summary>
+        /// Focus
+        /// </summary>
+        public struct Focus {
+            public Vector3 position;
+            public float distance; //distance par rapport à l'écran
+
+            public Focus(Vector3 pos, float dist) {
+                position = pos;
+                distance = dist;
             }
 
         }

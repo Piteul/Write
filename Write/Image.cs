@@ -125,33 +125,64 @@ namespace Write {
 
         }
 
-
+        /// <summary>
+        /// Dessine l'integralité de la scène et la transforme en image
+        /// </summary>
+        /// <param name="scen"></param>
+        /// <returns></returns>
         public static Image dessineAll(Scene scen) {
             Camera cam = scen.cam;
+            Image img = new Image(cam.hauteur, cam.largeur, new Couleur(0, 0, 0));
 
-            Image img = new Image(cam.hauteur, cam.largeur, new Couleur(0,0,0));
             for (int x = 0; x < cam.hauteur; x++) {
                 for (int y = 0; y < cam.largeur; y++) {
-                    double temp = double.MaxValue;
 
-                    //P est la position et D est la direction (donc x, y non affecté)
-                    Ray r = new Ray(new Vector3(x, y, cam.position.Z), new Vector3(0, 0, 1));
+                    double tmp = double.MaxValue; //contiendra la val de l'intersection
+                    Vector3 pixelActuel = new Vector3(x, y, cam.position.Z);
+                    Ray r = new Ray(pixelActuel, cam.VecteurDirecteurFocus(x, y));
+                    //Ray r = new Ray(new Vector3(x, y, cam.position.Z), new Vector3(0,0,1));
+
+                    Sphere sphereTemp = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0));
+
+
                     foreach (Sphere s in scen.spheres) {
-                        if (intersection(r, s) != -1 && intersection(r, s) < temp) {
-                            temp = intersection(r, s);
-                            img.dessinerPixel(x, y, s.couleur.rgb, 255);
+                        double resIntersection = intersection(r, s);
+                        if (resIntersection != -1 && resIntersection < tmp) {
+
+                            tmp = resIntersection;
+                            sphereTemp = s;
+                            //img.dessinerPixel(x, y, s.couleur.rgb, 255);
                         }
                     }
+
+                    if (tmp != double.MaxValue) {
+
+                        Vector3 pointSphere = pixelActuel + Vector3.Multiply((float)(tmp * 0.99999), cam.VecteurDirecteurFocus(x, y));
+
+                        Ray r2 = new Ray(pointSphere, scen.lumiere.origine - pointSphere);
+                        tmp = double.MaxValue;
+
+                        foreach (Sphere s2 in scen.spheres) {
+                            double resIntersection = intersection(r2, s2);
+                            if (resIntersection != -1 && resIntersection < tmp) {
+
+                                tmp = resIntersection;
+                                //img.dessinerPixel(x, y, s.couleur.rgb, 255);
+                            }
+                        }
+
+                        if (tmp < 1) {
+                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 100);
+                        }
+                        else {
+                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
+                        }
+                    }
+
                 }
-
             }
-
             return img;
-
-
-
         }
-
 
 
         /// <summary>
@@ -226,50 +257,50 @@ namespace Write {
         }
     }
 }
-        //public Image dessineScene(Camera cam, Scene scen, Couleur _couleur) {
-        //    Image img = new Image(cam.largeur, cam.longueur, _couleur);
-        //    for (int x = (int)cam.o.X; x < cam.o.X + cam.largeur; x++) {
-        //        for (int y = (int)cam.o.Y; y < cam.o.Y + cam.longueur; y++) {
-        //            Ray r = new Ray(new Vector3(x, y, cam.o.Z), cam.GetFocusAngle(x, y));
-        //            double temp = double.MaxValue;
-        //            Sphere s2 = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0)); //défaut
-        //            foreach (Sphere s in scen.spheres) {
-        //                if (intersection(r, s) != -1 && intersection(r, s) < temp) {
-        //                    temp = intersection(r, s);
-        //                    s2 = s;
-        //                }
-        //            }
-        //            if (temp != double.MaxValue) {
-        //                Vector3 pointOnSphere = Vector3.Add(new Vector3(x, y, cam.o.Z), Vector3.Multiply((float)temp, cam.d));
+//public Image dessineScene(Camera cam, Scene scen, Couleur _couleur) {
+//    Image img = new Image(cam.largeur, cam.longueur, _couleur);
+//    for (int x = (int)cam.o.X; x < cam.o.X + cam.largeur; x++) {
+//        for (int y = (int)cam.o.Y; y < cam.o.Y + cam.longueur; y++) {
+//            Ray r = new Ray(new Vector3(x, y, cam.o.Z), cam.GetFocusAngle(x, y));
+//            double temp = double.MaxValue;
+//            Sphere s2 = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0)); //défaut
+//            foreach (Sphere s in scen.spheres) {
+//                if (intersection(r, s) != -1 && intersection(r, s) < temp) {
+//                    temp = intersection(r, s);
+//                    s2 = s;
+//                }
+//            }
+//            if (temp != double.MaxValue) {
+//                Vector3 pointOnSphere = Vector3.Add(new Vector3(x, y, cam.o.Z), Vector3.Multiply((float)temp, cam.d));
 
-        //                //On décale i un tout petit peu vers l'extérieur de la sphère pour être sur de pas être dans la sphère.
-        //                //On calcule le vecteur pointSphere->centreSphere, on le normalise et on l'inverse
-        //                Vector3 directionTemp = Vector3.Negate(Vector3.Normalize(Vector3.Subtract(s2.c, pointOnSphere)));
+//                //On décale i un tout petit peu vers l'extérieur de la sphère pour être sur de pas être dans la sphère.
+//                //On calcule le vecteur pointSphere->centreSphere, on le normalise et on l'inverse
+//                Vector3 directionTemp = Vector3.Negate(Vector3.Normalize(Vector3.Subtract(s2.c, pointOnSphere)));
 
-        //                pointOnSphere = Vector3.Add(pointOnSphere, directionTemp);
-        //                Ray r2 = new Ray(pointOnSphere, Vector3.Subtract(scen.lumiere.origine, pointOnSphere));
-        //                bool seeTheLight = true;
+//                pointOnSphere = Vector3.Add(pointOnSphere, directionTemp);
+//                Ray r2 = new Ray(pointOnSphere, Vector3.Subtract(scen.lumiere.origine, pointOnSphere));
+//                bool seeTheLight = true;
 
-        //                foreach (Sphere s in scen.spheres) {
-        //                    if (intersection(r, s) != -1) {
-        //                        seeTheLight = false;
-        //                        break;
-        //                    }
+//                foreach (Sphere s in scen.spheres) {
+//                    if (intersection(r, s) != -1) {
+//                        seeTheLight = false;
+//                        break;
+//                    }
 
-        //                }
-        //                if (seeTheLight) {
-        //                    Console.WriteLine("Lumiere");
-        //                    //dessinerPixel(x, y, s2.couleur.rgb, 255);
-        //                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 255);
-        //                }
-        //                else {
-        //                    //dessinerPixel(x, y, s2.couleur.rgb, 100);
-        //                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 100);
+//                }
+//                if (seeTheLight) {
+//                    Console.WriteLine("Lumiere");
+//                    //dessinerPixel(x, y, s2.couleur.rgb, 255);
+//                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 255);
+//                }
+//                else {
+//                    //dessinerPixel(x, y, s2.couleur.rgb, 100);
+//                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 100);
 
-        //                }
-        //            }
-        //        }
-        //    }
+//                }
+//            }
+//        }
+//    }
 
-        //    return img;
-        //}
+//    return img;
+//}
