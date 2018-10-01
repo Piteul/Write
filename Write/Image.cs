@@ -142,6 +142,7 @@ namespace Write {
                     Ray r = new Ray(pixelActuel, cam.VecteurDirecteurFocus(x, y));
                     //Ray r = new Ray(new Vector3(x, y, cam.position.Z), new Vector3(0,0,1));
 
+                    //Stockera la sphère la plus proche et qui sera éclairé
                     Sphere sphereTemp = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0));
 
 
@@ -159,6 +160,7 @@ namespace Write {
 
                         Vector3 pointSphere = pixelActuel + Vector3.Multiply((float)(tmp * 0.99999), cam.VecteurDirecteurFocus(x, y));
 
+                        //Rayon de départ pointSphere et en direction de la lumière
                         Ray r2 = new Ray(pointSphere, scen.lumiere.origine - pointSphere);
                         tmp = double.MaxValue;
 

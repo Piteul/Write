@@ -43,14 +43,14 @@ namespace Write {
 
             //Camera camera = new Camera(new Vector3(0, 0, 1000), 200, 200, new Vector3(0, 0, -1));
             Camera camera = new Camera(new Vector3(0,0,-10), 1000, 1000);
-            Lumiere lumiere = new Lumiere(new Vector3(500, 700, -1000));
+            Lumiere lumiere = new Lumiere(new Vector3(500, 0, 0));
 
             Scene scene = new Scene(camera, lumiere);
             scene.spheres.Add(new Sphere(new Vector3(200, 200, 200), 50, new Couleur(0.3, 0.8, 0.1)));
             scene.spheres.Add(new Sphere(new Vector3(300, 250, 800), 100, new Couleur(0.6, 0.6, 0.2)));
             scene.spheres.Add(new Sphere(new Vector3(500, 350, 450), 150, new Couleur(1, 0.8, 0.2)));
             scene.spheres.Add(new Sphere(new Vector3(500, 350, 350), 100, new Couleur(1, 0.8, 1)));
-           // scene.spheres.Add(new Sphere(new Vector3(800, 600, 300), 100, new Couleur(1, 0.3, 0.2)));
+            scene.spheres.Add(new Sphere(new Vector3(800, 600, 300), 100, new Couleur(1, 0.3, 0.2)));
             scene.spheres.Add(new Sphere(new Vector3(750, 750, 700), 200, new Couleur(0.2, 0.2, 1)));
             scene.spheres.Add(new Sphere(new Vector3(750, 850, 850), 200, new Couleur(0.6, 0.2, 1)));
             scene.spheres.Add(new Sphere(new Vector3(500, 1500, 2000), 800, new Couleur(0.1, 0.8, 0.8)));
