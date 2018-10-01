@@ -59,36 +59,36 @@ namespace Write {
         /// </summary>
         public struct Camera {
 
-            public Vector3 o;
-            public int longueur, largeur;
-            public Vector3 d;
-            public Vector3 focus;
+            //public Vector3 o;
+            //public int longueur, largeur;
+            //public Vector3 d;
+            //public Vector3 focus;
             //public float distanceFocus = 500;
 
-            public Camera(Vector3 _origine, int _longueur, int _largeur, Vector3 _direction) {
-                o = _origine;
-                longueur = _longueur;
-                largeur = _largeur;
-                d = Vector3.Normalize(_direction);
-                focus = new Vector3(o.X + (longueur / 2), o.Y + (largeur / 2), o.Z);
-                focus = Vector3.Add(focus, Vector3.Multiply(Vector3.Negate(d), 500));
-            }
-
-            public Vector3 GetFocusAngle(float x, float y) {
-                Vector3 res = Vector3.Subtract(new Vector3(x, y, o.Z), focus);
-                return Vector3.Normalize(res);
-            }
-
-
-            //public Vector3 position { get; set; }
-            //public int hauteur;
-            //public int largeur;
-
-            //public Camera(Vector3 p, int _hauteur, int _largeur) {
-            //    position = p;
-            //    hauteur = _hauteur;
+            //public Camera(Vector3 _origine, int _longueur, int _largeur, Vector3 _direction) {
+            //    o = _origine;
+            //    longueur = _longueur;
             //    largeur = _largeur;
+            //    d = Vector3.Normalize(_direction);
+            //    focus = new Vector3(o.X + (longueur / 2), o.Y + (largeur / 2), o.Z);
+            //    focus = Vector3.Add(focus, Vector3.Multiply(Vector3.Negate(d), 500));
             //}
+
+            //public Vector3 GetFocusAngle(float x, float y) {
+            //    Vector3 res = Vector3.Subtract(new Vector3(x, y, o.Z), focus);
+            //    return Vector3.Normalize(res);
+            //}
+
+
+            public Vector3 position { get; set; }
+            public int hauteur;
+            public int largeur;
+
+            public Camera(Vector3 p, int _hauteur, int _largeur) {
+                position = p;
+                hauteur = _hauteur;
+                largeur = _largeur;
+            }
 
         }
 
@@ -175,7 +175,6 @@ namespace Write {
 
             if (delta < 0) {
                 //Console.WriteLine("Aucune intersection");
-
                 return -1;
             }
             else if (delta >= 0) {
@@ -183,12 +182,22 @@ namespace Write {
                 double res1 = (((-B) + Math.Sqrt(delta)) / (2 * A));
                 double res2 = (((-B) - Math.Sqrt(delta)) / (2 * A));
 
-                double finalRes = Math.Min(res1, res2);
+                if(res2 > 0) {
+                    return res2;
+                }
+                else if(res1 > 0) {
+                    return res1;
+                }
+                else {
+                    return -1;
+                }
+
+                //double finalRes = Math.Min(res1, res2);
 
                 //Console.WriteLine("Intersection !");
                 //Console.WriteLine("Res delta: " + finalRes.ToString());
 
-                return finalRes;
+                //return finalRes;
             }
 
             return -1;
