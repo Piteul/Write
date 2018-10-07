@@ -163,6 +163,41 @@ namespace Write {
 
         }
 
+        public class Surface {
+            public double albedo;
+
+            public Surface(double _albedo) {
+                albedo = _albedo;
+            }
+
+            public double DifuseLight(double albedo, Vector3 rayonOutput, Vector3 normaleSphere) {
+                // La formule est (Albedo*cosTheta) / Pi
+                // Dot entre rayout output et normal de la sphere, vérifier >= 0 et <= 1
+                // Albedo est la réflectivité de la surface
+
+                var result = (albedo * Vector3.Dot(rayonOutput, normaleSphere)) / Math.PI;
+                //Console.Error.WriteLine(result);
+                // Return quantité de lumière transmise par ma surface
+                return result;
+            }
+
+            // Return 3 value of R G B
+            // Distance entre le point de la sphere et l'origine de la lumière
+            public Vector3 DistanceLight(Vector3 lightEnergy, Vector3 pointSphere, Vector3 lightOrigin) {
+                // distance entre le point d'origine de la lumière et le point dans ma sphere 
+                float distance = Vector3.Distance(lightOrigin, pointSphere);
+
+                // On multiplie le vecteur (donc les 3 élements) et on renvoie la valeur RGB des 3 élements.
+                //Vector3 distanceLight = (lightEnergy * 1) / (distance * distance);
+                float distance2 = distance * distance;
+                Vector3 distanceLight = Vector3.Multiply(lightEnergy, (1 / distance2));
+
+                return distanceLight;
+
+            }
+        }
+
+
         /// <summary>
         /// Détermine si on est sur le rayon ou non
         /// </summary>

@@ -54,6 +54,7 @@ namespace Write {
             scene.spheres.Add(new Sphere(new Vector3(750, 750, 700), 200, new Couleur(0.2, 0.2, 1)));
             scene.spheres.Add(new Sphere(new Vector3(750, 850, 850), 200, new Couleur(0.6, 0.2, 1)));
             scene.spheres.Add(new Sphere(new Vector3(500, 1500, 2000), 800, new Couleur(0.1, 0.8, 0.8)));
+            scene.spheres.Add(new Sphere(new Vector3(850, 100, 1000), 300, new Couleur(0.7, 0.5, 0.3)));
 
             //img = img.dessineScene(camera, scene, new Couleur(1, 1, 1));
             Image img1 = Image.dessineAll(scene);
@@ -61,7 +62,7 @@ namespace Write {
 
 
             Console.WriteLine("Image générée.");
-            Console.ReadLine();
+            //Console.ReadLine();
 
 
 

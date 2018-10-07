@@ -47,9 +47,17 @@ namespace Write {
         /// <param name="y"></param>
         /// <param name="_rgb"></param>
         public void dessinerPixel(int x, int y, double[] _rgb, int val) {
-            this.r[x, y] = (int)(_rgb[0] * val);
-            this.g[x, y] = (int)(_rgb[1] * val);
-            this.b[x, y] = (int)(_rgb[2] * val);
+            this.r[x, y] = (int)Clamp((_rgb[0] * val));
+            this.g[x, y] = (int)Clamp((_rgb[1] * val));
+            this.b[x, y] = (int)Clamp((_rgb[2] * val));
+            //Console.WriteLine(this.r[x, y].ToString());
+
+        }
+
+        public void dessinerPixel(int x, int y, double[] _rgb, double val) {
+            this.r[x, y] = (int)Clamp((_rgb[0] * val));
+            this.g[x, y] = (int)Clamp((_rgb[1] * val));
+            this.b[x, y] = (int)Clamp((_rgb[2] * val));
             //Console.WriteLine(this.r[x, y].ToString());
 
         }
@@ -59,6 +67,17 @@ namespace Write {
             this.g[x, y] = g * val;
             this.b[x, y] = b * val;
             //Console.WriteLine(this.r[x, y].ToString());
+
+        }
+
+        public double Clamp(double i) {
+            if (i < 0) {
+                return 0;
+            }
+            else if (i > 255) {
+                return 255;
+            }
+            else return i;
 
         }
 
@@ -172,12 +191,54 @@ namespace Write {
                                 //img.dessinerPixel(x, y, s.couleur.rgb, 255);
                             }
                         }
+                        ////
+                        double albedo = 0.2;
+                        Surface surface1 = new Surface(albedo);
+                        // Résultat de  formule est (Albedo*cosTheta) / Pi
+                        double albedoOnSphere = surface1.DifuseLight(surface1.albedo, Vector3.Normalize(r2.d), cam.VecteurDirecteurFocus(x, y)); //ou pointSphere
+                        // Facteur 1/D²
+                        float epsilon = 0;
+                        //pointOnSphere = Vector3.Add(pointOnSphere, sphereToLight.d * epsilon);
+                        int powerOfLightValue = 500;
+                        Vector3 powerOfLight = new Vector3(powerOfLightValue, powerOfLightValue, powerOfLightValue);
+                        Vector3 distanceLight = surface1.DistanceLight(powerOfLight, pointSphere, scen.lumiere.origine);
+                        int intensity = 200;
+                        double powerOfShadow = 0.2;
+
+
+                        ////
 
                         if (tmp < 1) {
-                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 100);
+
+                            //img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 50);
+                            double flux = (powerOfShadow * distanceLight.X * intensity * albedoOnSphere * intensity);
+                            flux = flux * -100;
+                            //if(flux > 0) Console.WriteLine("Flux : " + flux.ToString());
+
+                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
+                            
+                            //img.SetPixel(x, y, 
+                            //    (int)(sphereTemp.couleur.r * distanceLight.X * intensity * albedoOnSphere * intensity), 
+                            //    (int)(sphereTemp.couleur.g * distanceLight.Y * intensity * albedoOnSphere * intensity),
+                            //    (int)(sphereTemp.couleur.b * distanceLight.Z * intensity * albedoOnSphere * intensity));
+
+
                         }
                         else {
-                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
+
+                            //img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
+                            double flux =(distanceLight.X * intensity * albedoOnSphere * intensity);
+                            flux = flux * -100;
+                            //if (flux > 0) Console.WriteLine("Flux : " + flux.ToString());
+
+                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
+
+                            //img.SetPixel(x, y,
+                            //(sphereTemp.couleur.r * powerOfShadow * distanceLight.X * intensity * albedoOnSphere * intensity),
+                            //(sphereTemp.couleur.g * powerOfShadow * distanceLight.Y * intensity * albedoOnSphere * intensity),
+                            //(sphereTemp.couleur.b * powerOfShadow * distanceLight.Z * intensity * albedoOnSphere * intensity));
+
+
                         }
                     }
 
@@ -185,6 +246,27 @@ namespace Write {
             }
             return img;
         }
+
+        ///
+        public void SetPixel(int x, int y, double _r, double _g, double _b) {
+            this.r[x, y] = (int) Clamp(_r);
+            this.g[x, y] = (int) Clamp(_g);
+            this.b[x, y] = (int) Clamp(_b);
+        }
+
+
+
+        //public double Clamp(double color) {
+        //    if (color <= 0) color = 0;
+        //    if (color >= 255) color = 255;
+        //    color = color / 255;
+        //    color = Math.Pow(color, 1 / 2.2);
+        //    color = color * 255;
+        //    return color;
+        //}
+
+
+        ////
 
 
         /// <summary>
