@@ -27,13 +27,6 @@ namespace Write {
                 complet = Vector3.Add(p, d);
             }
 
-            //public Ray(Camera c, Vector3 v2) {
-            //    p = c.position;
-            //    d = v2;
-            //    complet = Vector3.Add(p, d);
-            //}
-
-
         }
 
         /// <summary>
@@ -47,10 +40,13 @@ namespace Write {
 
             public Couleur couleur;
 
+            public Surface surface;
+
             public Sphere(Vector3 v1, int f, Couleur _couleur) {
                 c = v1;
                 r = f;
                 couleur = _couleur;
+                surface = new Surface(0.2);
             }
         }
 
@@ -59,39 +55,18 @@ namespace Write {
         /// </summary>
         public struct Camera {
 
-            //public Vector3 o;
-            //public int longueur, largeur;
-            //public Vector3 d;
-            //public Vector3 focus;
-            //public float distanceFocus = 500;
-
-            //public Camera(Vector3 _origine, int _longueur, int _largeur, Vector3 _direction) {
-            //    o = _origine;
-            //    longueur = _longueur;
-            //    largeur = _largeur;
-            //    d = Vector3.Normalize(_direction);
-            //    focus = new Vector3(o.X + (longueur / 2), o.Y + (largeur / 2), o.Z);
-            //    focus = Vector3.Add(focus, Vector3.Multiply(Vector3.Negate(d), 500));
-            //}
-
-            //public Vector3 GetFocusAngle(float x, float y) {
-            //    Vector3 res = Vector3.Subtract(new Vector3(x, y, o.Z), focus);
-            //    return Vector3.Normalize(res);
-            //}
-
-
             public Vector3 position { get; set; }
             public int hauteur;
             public int largeur;
             public Focus focus;
-            
+
             public Camera(Vector3 p, int _hauteur, int _largeur) {
                 position = p;
                 hauteur = _hauteur;
                 largeur = _largeur;
 
-                focus.distance = 2000;
-                focus.position = new Vector3(position.X + (hauteur / 2), position.Y + (largeur / 2), position.Z-focus.distance);
+                focus.distance = 1000;
+                focus.position = new Vector3(position.X + (hauteur / 2), position.Y + (largeur / 2), position.Z - focus.distance);
                 Console.WriteLine("Focus pos : " + focus.position.ToString());
             }
 
@@ -126,7 +101,6 @@ namespace Write {
             public Camera cam { get; set; }
             public Lumiere lumiere { get; set; }
 
-
             public Scene(Camera _cam, Lumiere _lumiere) {
                 cam = _cam;
                 lumiere = _lumiere;
@@ -140,9 +114,14 @@ namespace Write {
         /// </summary>
         public struct Lumiere {
             public Vector3 origine;
+            public int puissance;
+            public int intensite;
 
-            public Lumiere(Vector3 _origine) {
+
+            public Lumiere(Vector3 _origine, int _puissance, int _intensite) {
                 origine = _origine;
+                puissance = _puissance;
+                intensite = _intensite;
             }
 
         }
@@ -164,39 +143,33 @@ namespace Write {
         }
 
         public class Surface {
+            //(Albedo* cosTheta) / Pi
             public double albedo;
 
             public Surface(double _albedo) {
                 albedo = _albedo;
             }
-
-            public double DifuseLight(double albedo, Vector3 rayonOutput, Vector3 normaleSphere) {
-                // La formule est (Albedo*cosTheta) / Pi
-                // Dot entre rayout output et normal de la sphere, vérifier >= 0 et <= 1
-                // Albedo est la réflectivité de la surface
-
-                var result = (albedo * Vector3.Dot(rayonOutput, normaleSphere)) / Math.PI;
-                //Console.Error.WriteLine(result);
-                // Return quantité de lumière transmise par ma surface
-                return result;
-            }
-
-            // Return 3 value of R G B
-            // Distance entre le point de la sphere et l'origine de la lumière
-            public Vector3 DistanceLight(Vector3 lightEnergy, Vector3 pointSphere, Vector3 lightOrigin) {
-                // distance entre le point d'origine de la lumière et le point dans ma sphere 
-                float distance = Vector3.Distance(lightOrigin, pointSphere);
-
-                // On multiplie le vecteur (donc les 3 élements) et on renvoie la valeur RGB des 3 élements.
-                //Vector3 distanceLight = (lightEnergy * 1) / (distance * distance);
-                float distance2 = distance * distance;
-                Vector3 distanceLight = Vector3.Multiply(lightEnergy, (1 / distance2));
-
-                return distanceLight;
-
-            }
         }
 
+        public static double DiffusionLumineuse(double albedo, Vector3 rayonVersLumiere, Vector3 normaleSphere) {
+            // formule : (Albedo*cosTheta) / Pi
+            // rayonVersLumiere est le rayon de départ pointSphere, en direction de la lumière
+            // Dot entre rayoutVersLumiere et normal de la sphere, vérifier >= 0 et <= 1
+
+            var res = (albedo * Vector3.Dot(rayonVersLumiere, normaleSphere)) / Math.PI;
+            // Return quantité de lumière transmise par ma surface
+            return res;
+        }
+
+        public static double DistanceLumineuse(int puissanceLumineuse, Vector3 pointSphere, Vector3 origineLumineuse) {
+            // distance entre point d'origine de ma lumière et le point dans ma sphere actuel
+            float distance = Vector3.Distance(origineLumineuse, pointSphere);
+
+            double distanceLumineuse = (puissanceLumineuse * 1) / (distance * distance);
+
+            return distanceLumineuse;
+
+        }
 
         /// <summary>
         /// Détermine si on est sur le rayon ou non
@@ -204,7 +177,7 @@ namespace Write {
         /// <param name="r"></param>
         /// <param name="v"></param>
         /// <returns></returns>
-        public static bool surRayon(Ray r, Vector3 v) {
+        public static bool SurRayon(Ray r, Vector3 v) {
             if (((v.X - r.p.X) / (r.complet.X - r.p.X)) == ((v.Y - r.p.Y) / (r.complet.Y - r.p.Y))
                 && ((v.X - r.p.X) / (r.complet.X - r.p.X)) == ((v.Z - r.p.Z) / (r.complet.Z - r.p.Z)))
                 return true;
@@ -213,12 +186,12 @@ namespace Write {
         }
 
         /// <summary>
-        /// Calcule l'intersection entre le rayon et la sphère
+        /// Calcule l'Intersection entre le rayon et la sphère
         /// </summary>
         /// <param name="ray"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        public static double intersection(Ray ray, Sphere sphere) {
+        public static double Intersection(Ray ray, Sphere sphere) {
 
             //c-p
             Vector3 vecSub = Vector3.Subtract(sphere.c, ray.p);
@@ -235,18 +208,18 @@ namespace Write {
             double delta = Math.Pow(B, 2) - (4 * (A * C));
 
             if (delta < 0) {
-                //Console.WriteLine("Aucune intersection");
+                //Console.WriteLine("Aucune Intersection");
                 return -1;
             }
             else if (delta >= 0) {
-                //on determine les deux intersections et retourne la première
+                //on determine les deux Intersections et retourne la première
                 double res1 = (((-B) + Math.Sqrt(delta)) / (2 * A));
                 double res2 = (((-B) - Math.Sqrt(delta)) / (2 * A));
 
-                if(res2 > 0) {
+                if (res2 > 0) {
                     return res2;
                 }
-                else if(res1 > 0) {
+                else if (res1 > 0) {
                     return res1;
                 }
                 else {
@@ -265,7 +238,7 @@ namespace Write {
 
         }
 
-     
+
 
     }
 }

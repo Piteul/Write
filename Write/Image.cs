@@ -33,7 +33,7 @@ namespace Write {
 
             for (int i = 0; i < hauteur; i++)
                 for (int j = 0; j < largeur; j++) {
-                    dessinerPixel(i, j, couleur.rgb, 255);
+                    DessinerPixel(i, j, couleur.rgb, 255);
                     //r[i, j] = 255;
                     //g[i, j] = 255;
                     //b[i, j] = 255;
@@ -46,7 +46,7 @@ namespace Write {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="_rgb"></param>
-        public void dessinerPixel(int x, int y, double[] _rgb, int val) {
+        public void DessinerPixel(int x, int y, double[] _rgb, int val) {
             this.r[x, y] = (int)Clamp((_rgb[0] * val));
             this.g[x, y] = (int)Clamp((_rgb[1] * val));
             this.b[x, y] = (int)Clamp((_rgb[2] * val));
@@ -54,7 +54,7 @@ namespace Write {
 
         }
 
-        public void dessinerPixel(int x, int y, double[] _rgb, double val) {
+        public void DessinerPixel(int x, int y, double[] _rgb, double val) {
             this.r[x, y] = (int)Clamp((_rgb[0] * val));
             this.g[x, y] = (int)Clamp((_rgb[1] * val));
             this.b[x, y] = (int)Clamp((_rgb[2] * val));
@@ -62,7 +62,7 @@ namespace Write {
 
         }
 
-        public void dessinerPixel(int x, int y, int r, int g, int b, int val) {
+        public void DessinerPixel(int x, int y, int r, int g, int b, int val) {
             this.r[x, y] = r * val;
             this.g[x, y] = g * val;
             this.b[x, y] = b * val;
@@ -85,14 +85,14 @@ namespace Write {
         /// Dessine une sphère
         /// </summary>
         /// <param name="sphere"></param>
-        public void dessinerSphere(Sphere sphere) {
+        public void DessinerSphere(Sphere sphere) {
 
             for (int i = 0; i < hauteur; i++)
                 for (int j = 0; j < largeur; j++) {
 
                     if (Math.Pow(i - sphere.c.X, 2) + Math.Pow(j - sphere.c.Y, 2) < Math.Pow(sphere.r, 2)) {
 
-                        dessinerPixel(i, j, sphere.couleur.rgb, 255);
+                        DessinerPixel(i, j, sphere.couleur.rgb, 255);
                         //r[i, j] = 0;
                         //g[i, j] = 172;
                         //b[i, j] = 230;
@@ -104,7 +104,7 @@ namespace Write {
         /// Dessine un rayon
         /// </summary>
         /// <param name="rayon"></param>
-        public void dessinerRayon(Ray rayon) {
+        public void DessinerRayon(Ray rayon) {
             r[(int)rayon.p.X, (int)rayon.p.Y] = 255;
             g[(int)rayon.p.X, (int)rayon.p.Y] = 153;
             b[(int)rayon.p.X, (int)rayon.p.Y] = 0;
@@ -116,7 +116,7 @@ namespace Write {
 
             for (int i = 0; i < hauteur; i++)
                 for (int j = 0; j < largeur; j++) {
-                    if (surRayon(rayon, new Vector3(i, j, 0))) {
+                    if (SurRayon(rayon, new Vector3(i, j, 0))) {
                         r[i, j] = 255;
                         g[i, j] = 13;
                         b[i, j] = 13;
@@ -126,12 +126,12 @@ namespace Write {
         }
 
         /// <summary>
-        /// Dessine l'intersection d'un rayon et d'une sphère
+        /// Dessine l'Intersection d'un rayon et d'une sphère
         /// </summary>
         /// <param name="rayon"></param>
         /// <param name="sphere"></param>
-        public void dessinerIntersection(Ray rayon, Sphere sphere) {
-            float x = (float)intersection(rayon, sphere);
+        public void DessinerIntersection(Ray rayon, Sphere sphere) {
+            float x = (float)Intersection(rayon, sphere);
             if (x != -1) {
                 Vector3 i = Vector3.Add(rayon.p, Vector3.Multiply(x, rayon.d));
                 //Console.WriteLine(i.X);
@@ -149,14 +149,14 @@ namespace Write {
         /// </summary>
         /// <param name="scen"></param>
         /// <returns></returns>
-        public static Image dessineAll(Scene scen) {
+        public static Image DessineAll(Scene scen) {
             Camera cam = scen.cam;
             Image img = new Image(cam.hauteur, cam.largeur, new Couleur(0, 0, 0));
 
             for (int x = 0; x < cam.hauteur; x++) {
                 for (int y = 0; y < cam.largeur; y++) {
 
-                    double tmp = double.MaxValue; //contiendra la val de l'intersection
+                    double tmp = double.MaxValue; //contiendra la val de l'Intersection
                     Vector3 pixelActuel = new Vector3(x, y, cam.position.Z);
                     Ray r = new Ray(pixelActuel, cam.VecteurDirecteurFocus(x, y));
                     //Ray r = new Ray(new Vector3(x, y, cam.position.Z), new Vector3(0,0,1));
@@ -166,79 +166,58 @@ namespace Write {
 
 
                     foreach (Sphere s in scen.spheres) {
-                        double resIntersection = intersection(r, s);
+                        double resIntersection = Intersection(r, s);
                         if (resIntersection != -1 && resIntersection < tmp) {
 
                             tmp = resIntersection;
                             sphereTemp = s;
-                            //img.dessinerPixel(x, y, s.couleur.rgb, 255);
+                            //img.DessinerPixel(x, y, s.couleur.rgb, 255);
                         }
                     }
 
                     if (tmp != double.MaxValue) {
 
-                        Vector3 pointSphere = pixelActuel + Vector3.Multiply((float)(tmp * 0.99999), cam.VecteurDirecteurFocus(x, y));
+                        Vector3 pointSphere = pixelActuel + Vector3.Multiply((float)(tmp * 0.9999), cam.VecteurDirecteurFocus(x, y));
 
                         //Rayon de départ pointSphere et en direction de la lumière
                         Ray r2 = new Ray(pointSphere, scen.lumiere.origine - pointSphere);
                         tmp = double.MaxValue;
 
                         foreach (Sphere s2 in scen.spheres) {
-                            double resIntersection = intersection(r2, s2);
+                            double resIntersection = Intersection(r2, s2);
                             if (resIntersection != -1 && resIntersection < tmp) {
 
                                 tmp = resIntersection;
-                                //img.dessinerPixel(x, y, s.couleur.rgb, 255);
+                                //img.DessinerPixel(x, y, s.couleur.rgb, 255);
                             }
                         }
-                        ////
-                        double albedo = 0.2;
-                        Surface surface1 = new Surface(albedo);
-                        // Résultat de  formule est (Albedo*cosTheta) / Pi
-                        double albedoOnSphere = surface1.DifuseLight(surface1.albedo, Vector3.Normalize(r2.d), cam.VecteurDirecteurFocus(x, y)); //ou pointSphere
-                        // Facteur 1/D²
-                        float epsilon = 0;
-                        //pointOnSphere = Vector3.Add(pointOnSphere, sphereToLight.d * epsilon);
-                        int powerOfLightValue = 500;
-                        Vector3 powerOfLight = new Vector3(powerOfLightValue, powerOfLightValue, powerOfLightValue);
-                        Vector3 distanceLight = surface1.DistanceLight(powerOfLight, pointSphere, scen.lumiere.origine);
-                        int intensity = 200;
-                        double powerOfShadow = 0.2;
+
+                        double diffusionLumineuse = DiffusionLumineuse(sphereTemp.surface.albedo, Vector3.Normalize(r2.d), cam.VecteurDirecteurFocus(x, y)); //ou pointSphere
+
+                        //pointSphere = Vector3.Add(pointSphere, r2.d * 0.05f);
+
+                        double distanceLumineuse = DistanceLumineuse(scen.lumiere.puissance, pointSphere, scen.lumiere.origine);
+                        double ombre = 0.2;
 
 
-                        ////
-
+                        //Pas de cercle
                         if (tmp < 1) {
 
-                            //img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 50);
-                            double flux = (powerOfShadow * distanceLight.X * intensity * albedoOnSphere * intensity);
+                            //img.DessinerPixel(x, y, sphereTemp.couleur.rgb, 50);
+                            double flux = (distanceLumineuse * scen.lumiere.intensite * diffusionLumineuse * scen.lumiere.intensite * ombre);
                             flux = flux * -100;
                             //if(flux > 0) Console.WriteLine("Flux : " + flux.ToString());
 
-                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
-                            
-                            //img.SetPixel(x, y, 
-                            //    (int)(sphereTemp.couleur.r * distanceLight.X * intensity * albedoOnSphere * intensity), 
-                            //    (int)(sphereTemp.couleur.g * distanceLight.Y * intensity * albedoOnSphere * intensity),
-                            //    (int)(sphereTemp.couleur.b * distanceLight.Z * intensity * albedoOnSphere * intensity));
-
-
+                            img.DessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
                         }
                         else {
 
-                            //img.dessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
-                            double flux =(distanceLight.X * intensity * albedoOnSphere * intensity);
+                            //img.DessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
+                            double flux = (distanceLumineuse * scen.lumiere.intensite * diffusionLumineuse * scen.lumiere.intensite);
                             flux = flux * -100;
                             //if (flux > 0) Console.WriteLine("Flux : " + flux.ToString());
 
-                            img.dessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
-
-                            //img.SetPixel(x, y,
-                            //(sphereTemp.couleur.r * powerOfShadow * distanceLight.X * intensity * albedoOnSphere * intensity),
-                            //(sphereTemp.couleur.g * powerOfShadow * distanceLight.Y * intensity * albedoOnSphere * intensity),
-                            //(sphereTemp.couleur.b * powerOfShadow * distanceLight.Z * intensity * albedoOnSphere * intensity));
-
-
+                            img.DessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
                         }
                     }
 
@@ -246,28 +225,6 @@ namespace Write {
             }
             return img;
         }
-
-        ///
-        public void SetPixel(int x, int y, double _r, double _g, double _b) {
-            this.r[x, y] = (int) Clamp(_r);
-            this.g[x, y] = (int) Clamp(_g);
-            this.b[x, y] = (int) Clamp(_b);
-        }
-
-
-
-        //public double Clamp(double color) {
-        //    if (color <= 0) color = 0;
-        //    if (color >= 255) color = 255;
-        //    color = color / 255;
-        //    color = Math.Pow(color, 1 / 2.2);
-        //    color = color * 255;
-        //    return color;
-        //}
-
-
-        ////
-
 
         /// <summary>
         ///Simple function to write a file
@@ -290,7 +247,7 @@ namespace Write {
         /// <summary>
         ///Simple function to write a PPM
         /// </summary>
-        public void simplePPM() {
+        public void SimplePPM() {
             // Create a string array with the lines of text
             string[] lines =
                 { "P3"
@@ -315,7 +272,7 @@ namespace Write {
         /// </summary>
         /// <param name="file"></param>
         /// <param name="img"></param>
-        public static void genererPPM(string file, Image img) {
+        public static void GenererPPM(string file, Image img) {
             //Use a streamwriter to write the text part of the encoding.
             var largeur = img.largeur;
             var hauteur = img.hauteur;
@@ -338,53 +295,7 @@ namespace Write {
                     outputFile.WriteLine(img.b[x, y]);
                 }
             outputFile.Close();
+
         }
     }
 }
-//public Image dessineScene(Camera cam, Scene scen, Couleur _couleur) {
-//    Image img = new Image(cam.largeur, cam.longueur, _couleur);
-//    for (int x = (int)cam.o.X; x < cam.o.X + cam.largeur; x++) {
-//        for (int y = (int)cam.o.Y; y < cam.o.Y + cam.longueur; y++) {
-//            Ray r = new Ray(new Vector3(x, y, cam.o.Z), cam.GetFocusAngle(x, y));
-//            double temp = double.MaxValue;
-//            Sphere s2 = new Sphere(new Vector3(0, 0, 0), 0, new Couleur(0, 0, 0)); //défaut
-//            foreach (Sphere s in scen.spheres) {
-//                if (intersection(r, s) != -1 && intersection(r, s) < temp) {
-//                    temp = intersection(r, s);
-//                    s2 = s;
-//                }
-//            }
-//            if (temp != double.MaxValue) {
-//                Vector3 pointOnSphere = Vector3.Add(new Vector3(x, y, cam.o.Z), Vector3.Multiply((float)temp, cam.d));
-
-//                //On décale i un tout petit peu vers l'extérieur de la sphère pour être sur de pas être dans la sphère.
-//                //On calcule le vecteur pointSphere->centreSphere, on le normalise et on l'inverse
-//                Vector3 directionTemp = Vector3.Negate(Vector3.Normalize(Vector3.Subtract(s2.c, pointOnSphere)));
-
-//                pointOnSphere = Vector3.Add(pointOnSphere, directionTemp);
-//                Ray r2 = new Ray(pointOnSphere, Vector3.Subtract(scen.lumiere.origine, pointOnSphere));
-//                bool seeTheLight = true;
-
-//                foreach (Sphere s in scen.spheres) {
-//                    if (intersection(r, s) != -1) {
-//                        seeTheLight = false;
-//                        break;
-//                    }
-
-//                }
-//                if (seeTheLight) {
-//                    Console.WriteLine("Lumiere");
-//                    //dessinerPixel(x, y, s2.couleur.rgb, 255);
-//                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 255);
-//                }
-//                else {
-//                    //dessinerPixel(x, y, s2.couleur.rgb, 100);
-//                    dessinerPixel(x, y, (int) s2.couleur.r, (int) s2.couleur.g, (int) s2.couleur.b, 100);
-
-//                }
-//            }
-//        }
-//    }
-
-//    return img;
-//}
