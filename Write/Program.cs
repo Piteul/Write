@@ -62,16 +62,16 @@ namespace Write {
             Scene scene = new Scene(camera, lumiere);
 
 
-            Sphere s1 = new Sphere(new Vector3(500, 800, 800), 100, new Couleur(0.3, 0.8, 0.1));
-            Sphere s2 = new Sphere(new Vector3(200, 200, 300), 100, new Couleur(0.6, 0.6, 0.2));
+            Sphere s1 = new Sphere(new Vector3(500, 800, 800), 100, new Couleur(0.7, 0.4, 0.4));
+            Sphere s2 = new Sphere(new Vector3(200, 200, 300), 100, new Couleur(0.6, 0.6, 0.6));
             Sphere leftWall = new Sphere(new Vector3(360, (float)(-1e5 - 100),500), (int)1e5, new Couleur(1, 0.8, 0.2));
             Sphere rightWall = new Sphere(new Vector3(360, (float)1e5 + 1380, 500), (int)1e5, new Couleur(1, 0.8, 1));
             Sphere topWall = new Sphere(new Vector3((float)-1e5 - 100, 640, 500), (int)1e5, new Couleur(1, 0.3, 0.2));
             Sphere bottomWall = new Sphere(new Vector3((float)1e5 + 820, 640, 500), (int)1e5, new Couleur(0.2, 0.2, 1));
-            Sphere backWall = new Sphere(new Vector3(360, 640,  (float)1e5 + 1100), (int)1e5, new Couleur(0.6, 0.2, 1));
+            Sphere backWall = new Sphere(new Vector3(360, 640,  (float)1e5 + 1000), (int)1e5, new Couleur(0.6, 0.2, 1));
             Sphere frontWall = new Sphere(new Vector3(360, 640,  (float)-1e5 - 1), (int)1e5, new Couleur(0.7, 0, 0.3));
 
-            Sphere[] spheres = { frontWall, backWall, rightWall, leftWall, bottomWall, topWall, s1 };
+            Sphere[] spheres = { frontWall, backWall, rightWall, leftWall, bottomWall, topWall, s1, s2 };
             scene.spheres.AddRange(spheres);
 
 
