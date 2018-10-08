@@ -205,7 +205,7 @@ namespace Write {
 
                             //img.DessinerPixel(x, y, sphereTemp.couleur.rgb, 50);
                             double flux = (distanceLumineuse * scen.lumiere.intensite * diffusionLumineuse * scen.lumiere.intensite * ombre);
-                            flux = flux * -100;
+                            flux = -flux;
                             //if(flux > 0) Console.WriteLine("Flux : " + flux.ToString());
 
                             img.DessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
@@ -214,7 +214,7 @@ namespace Write {
 
                             //img.DessinerPixel(x, y, sphereTemp.couleur.rgb, 255);
                             double flux = (distanceLumineuse * scen.lumiere.intensite * diffusionLumineuse * scen.lumiere.intensite);
-                            flux = flux * -100;
+                            flux = -flux;
                             //if (flux > 0) Console.WriteLine("Flux : " + flux.ToString());
 
                             img.DessinerPixel(x, y, sphereTemp.couleur.rgb, flux);
@@ -297,5 +297,7 @@ namespace Write {
             outputFile.Close();
 
         }
+
+
     }
 }

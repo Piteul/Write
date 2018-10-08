@@ -56,18 +56,18 @@ namespace Write {
             //scene.spheres.Add(new Sphere(new Vector3(500, 1500, 2000), 800, new Couleur(0.1, 0.8, 0.8)));
             //scene.spheres.Add(new Sphere(new Vector3(850, 100, 1000), 300, new Couleur(0.7, 0, 0.3)));
 
+
+            //Deuxième Compo
             Camera camera = new Camera(new Vector3(0, 0, 0), 720, 1280);
-            Lumiere lumiere = new Lumiere(new Vector3(0, 640, 200), 400, 250);
+            Lumiere lumiere = new Lumiere(new Vector3(0, 640, 200), 3000, 850);
 
             Scene scene = new Scene(camera, lumiere);
-
-
-            Sphere s1 = new Sphere(new Vector3(500, 800, 800), 100, new Couleur(0.7, 0.4, 0.4));
-            Sphere s2 = new Sphere(new Vector3(200, 200, 300), 100, new Couleur(0.6, 0.6, 0.6));
+            Sphere s1 = new Sphere(new Vector3(720/2, (1280/4)*1, 600), 200, new Couleur(1, 0.6, 0.6));
+            Sphere s2 = new Sphere(new Vector3(720/2, (1280/4)*3, 600), 200, new Couleur(0.6, 1, 0.6));
             Sphere leftWall = new Sphere(new Vector3(360, (float)(-1e5 - 100),500), (int)1e5, new Couleur(1, 0.8, 0.2));
             Sphere rightWall = new Sphere(new Vector3(360, (float)1e5 + 1380, 500), (int)1e5, new Couleur(1, 0.8, 1));
             Sphere topWall = new Sphere(new Vector3((float)-1e5 - 100, 640, 500), (int)1e5, new Couleur(1, 0.3, 0.2));
-            Sphere bottomWall = new Sphere(new Vector3((float)1e5 + 820, 640, 500), (int)1e5, new Couleur(0.2, 0.2, 1));
+            Sphere bottomWall = new Sphere(new Vector3((float)1e5 + 820, 640, 500), (int)1e5, new Couleur(0.2, 0.7, 1));
             Sphere backWall = new Sphere(new Vector3(360, 640,  (float)1e5 + 1000), (int)1e5, new Couleur(0.6, 0.2, 1));
             Sphere frontWall = new Sphere(new Vector3(360, 640,  (float)-1e5 - 1), (int)1e5, new Couleur(0.7, 0, 0.3));
 
