@@ -9,6 +9,22 @@ namespace Write {
     public class Synthese {
 
 
+        public struct Boite {
+
+            public Vector3 maxX;
+            public Vector3 maxY;
+            public Couleur couleur;
+
+
+            public Boite(Vector3 _v1, Vector3 _v2, Couleur _couleur) {
+
+                maxX = _v1;
+                maxY = _v2;
+                couleur = _couleur;
+            }
+        }
+
+
         /// <summary>
         /// Rayon de base P et direction D
         /// </summary>

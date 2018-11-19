@@ -75,6 +75,8 @@ namespace Write {
             scene.spheres.AddRange(spheres);
 
 
+
+
             //img = img.dessineScene(camera, scene, new Couleur(1, 1, 1));
             Image img1 = Image.DessineAll(scene);
             Image.GenererPPM("Scene.ppm", img1);

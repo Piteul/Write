@@ -81,6 +81,27 @@ namespace Write {
 
         }
 
+
+        public void DessinerBoite(Boite boite) {
+
+            for (int i = 0; i < hauteur; i++) {
+                for (int j = 0; j < largeur; j++) {
+
+                    //Dessin en 2D
+
+                    if (i >= boite.maxY.X && i <= boite.maxX.X) {
+                        if (j >= boite.maxX.Y && j <= boite.maxY.Y) {
+
+                            //Console.WriteLine("YES");
+                            DessinerPixel(i, j, boite.couleur.rgb, 255);
+                        }
+                    }
+                }
+            }
+
+
+        }
+
         /// <summary>
         /// Dessine une sphère
         /// </summary>
@@ -223,6 +244,8 @@ namespace Write {
 
                 }
             }
+            Boite b1 = new Boite(new Vector3(500, 100, 0), new Vector3(100, 500, 0), new Couleur(1, 1, 0.2));
+            img.DessinerBoite(b1);
             return img;
         }
 
